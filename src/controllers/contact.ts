@@ -1,6 +1,6 @@
-import nodemailer from "nodemailer";
 import { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
     service: "SendGrid",
@@ -37,7 +37,7 @@ export const postContact = (req: Request, res: Response) => {
     }
 
     const mailOptions = {
-        to: "your@email.com",
+        to: process.env.CONTACT_EMAIL,
         from: `${req.body.name} <${req.body.email}>`,
         subject: "Contact Form",
         text: req.body.message
