@@ -1,88 +1,78 @@
-import bcrypt from "bcrypt-nodejs";
+import { getModelForClass, mongoose, pre, prop } from "@typegoose/typegoose";
+import * as bcrypt from "bcrypt-nodejs";
 import crypto from "crypto";
-import mongoose from "mongoose";
 
-export type UserDocument = mongoose.Document & {
-    email: string;
-    password: string;
-    passwordResetToken: string;
-    passwordResetExpires: Date;
+export const gravatar = (size: number = 200, email?: string) => {
+  if (!email) {
+    return `https://gravatar.com/avatar/?s=${size}&d=retro`;
+  }
+  const md5 = crypto
+    .createHash("md5")
+    .update(email)
+    .digest("hex");
 
-    facebook: string;
-    tokens: AuthToken[];
-
-    profile: {
-        name: string;
-        gender: string;
-        location: string;
-        website: string;
-        picture: string;
-    };
-
-    comparePassword: comparePasswordFunction;
-    gravatar: (size: number) => string;
+  return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
-
-type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void;
 
 export interface AuthToken {
-    accessToken: string;
-    kind: string;
+  accessToken: string;
+  kind: string;
 }
 
-const userSchema = new mongoose.Schema({
-    email: { type: String, unique: true },
-    password: String,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
+interface Profile {
+  name: string;
+  gender: string;
+  location: string;
+  website: string;
+  picture: string;
+}
 
-    facebook: String,
-    twitter: String,
-    google: String,
-    tokens: Array,
-
-    profile: {
-        name: String,
-        gender: String,
-        location: String,
-        website: String,
-        picture: String
+@pre<IUser>("save", function (next) {
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) {
+      return next();
     }
-}, { timestamps: true });
-
-/**
- * Password hash middleware.
- */
-userSchema.pre("save", function save(next) {
-    const user = this as UserDocument;
-    if (!user.isModified("password")) { return next(); }
-    bcrypt.genSalt(10, (err, salt) => {
-        if (err) { return next(err); }
-        bcrypt.hash(user.password, salt, undefined, (err: mongoose.Error, hash) => {
-            if (err) { return next(err); }
-            user.password = hash;
-            next();
-        });
+    bcrypt.hash(this.password, salt, null, (err, hash) => {
+      if (!err) {
+        this.password = hash;
+      }
+      next();
     });
-});
+  });
+})
+class IUser {
+  @prop({
+    unique: true,
+  })
+  @prop()
+  email: string;
+  @prop()
+  password: string;
+  @prop()
+  passwordResetToken: string;
+  @prop()
+  passwordResetExpires: Date;
+  @prop()
+  facebook: string;
+  @prop()
+  tokens: AuthToken[];
 
-const comparePassword: comparePasswordFunction = function (candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, (err: mongoose.Error, isMatch: boolean) => {
-        cb(err, isMatch);
-    });
-};
+  @prop({
+    default: {
+      name: "",
+      gender: "",
+      location: "",
+      website: "",
+      picture: "",
+    } as Profile
+  })
+  profile: Profile
 
-userSchema.methods.comparePassword = comparePassword;
+  gravatar(size?: number): ReturnType<typeof gravatar> {
+    return gravatar(size, this.email);
+  }
+}
 
-/**
- * Helper method for getting user's gravatar.
- */
-userSchema.methods.gravatar = function (size: number = 200) {
-    if (!this.email) {
-        return `https://gravatar.com/avatar/?s=${size}&d=retro`;
-    }
-    const md5 = crypto.createHash("md5").update(this.email).digest("hex");
-    return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
-};
+export type UserDocument = mongoose.Document & IUser;
 
-export const User = mongoose.model<UserDocument>("User", userSchema);
+export const User = getModelForClass(IUser, { schemaOptions: { timestamps: true } });

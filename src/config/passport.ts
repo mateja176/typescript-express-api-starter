@@ -1,11 +1,12 @@
-import passport from "passport";
-import passportLocal from "passport-local";
-import passportFacebook from "passport-facebook";
+import { compare } from "bcrypt-nodejs";
+import { NextFunction, Request, Response } from "express";
 import _ from "lodash";
-
+import passport from "passport";
+import passportFacebook from "passport-facebook";
+import passportLocal from "passport-local";
 // import { User, UserType } from '../models/User';
 import { User, UserDocument } from "../models/User";
-import { Request, Response, NextFunction } from "express";
+
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
@@ -25,12 +26,12 @@ passport.deserializeUser((id, done) => {
  * Sign in using Email and Password.
  */
 passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    User.findOne({ email: email.toLowerCase() }, (err, user: any) => {
+    User.findOne({ email: email.toLowerCase() }, (err, user) => {
         if (err) { return done(err); }
         if (!user) {
             return done(undefined, false, { message: `Email ${email} not found.` });
         }
-        user.comparePassword(password, (err: Error, isMatch: boolean) => {
+        compare(password, user.password, (err: Error, isMatch: boolean) => {
             if (err) { return done(err); }
             if (isMatch) {
                 return done(undefined, user);
