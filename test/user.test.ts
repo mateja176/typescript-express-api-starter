@@ -37,7 +37,7 @@ describe("POST /login", () => {
             .field("password", "Hunter2")
             .expect(302)
             .end(function(err, res) {
-                expect(res.error).not.toBeDefined();
+                expect(res.error).toBeFalsy();
                 done();
             });
 
