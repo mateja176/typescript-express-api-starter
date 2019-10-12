@@ -1,5 +1,5 @@
 import { DocumentType, getModelForClass, pre, prop } from "@typegoose/typegoose";
-import * as bcrypt from "bcrypt-nodejs";
+import * as bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 export const gravatar = (size: number = 200, email?: string) => {
@@ -28,17 +28,7 @@ interface Profile {
 }
 
 @pre<IUser>("save", function (next) {
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) {
-      return next();
-    }
-    bcrypt.hash(this.password, salt, null, (err, hash) => {
-      if (!err) {
-        this.password = hash;
-      }
-      next();
-    });
-  });
+  bcrypt.hash(this.password, 10).then(next).catch(next);
 })
 class IUser {
   @prop({
