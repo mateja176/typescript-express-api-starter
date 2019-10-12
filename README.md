@@ -196,7 +196,6 @@ The full folder structure of this app is explained below:
 | **src/types**            | Holds .d.ts files not found on DefinitelyTyped. Covered more in this [section](#type-definition-dts-files)          |
 | **src**/server.ts        | Entry point to your express app                                                               |
 | **test**                 | Contains your tests. Separate from source because there is a different build process.         |
-| **views**                | Views define how your app renders on the client. In this case we're using pug                 |
 | .env.example             | API keys, tokens, passwords, database URI. Clone this, but don't check it in to public repos. |
 | .travis.yml              | Used to configure Travis CI build                                                             |
 | .copyStaticAssets.ts     | Build script that copies images, fonts, and JS libs to the dist folder                        |
@@ -519,7 +518,6 @@ In that file you'll find two sections:
 | passport                        | Simple and elegant authentication library for node.js                 |
 | passport-facebook               | Sign-in with Facebook plugin.                                         |
 | passport-local                  | Sign-in with Username and Password plugin.                            |
-| pug (jade)                      | Template engine for Express.                                          |
 | request                         | Simplified HTTP request library.                                       |
 | request-promise                 | Promisified HTTP request library. Let's us use async/await             |
 | winston                         | Logging library                                                       |
