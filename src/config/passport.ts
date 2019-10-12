@@ -1,4 +1,4 @@
-import { compare } from "bcrypt-nodejs";
+import { compare } from "bcryptjs";
 import { NextFunction, Request, Response } from "express";
 import _ from "lodash";
 import passport from "passport";
