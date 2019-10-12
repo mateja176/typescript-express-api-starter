@@ -328,9 +328,9 @@ In the `tsconfig.json` for this project you'll see the following:
 This tells the TypeScript compiler that in addition to looking in `node_modules/@types` for every import (`*`) also look in our own `.d.ts` file location `<baseUrl>` + `src/types/*`.
 So when we write something like:
 ```ts
-import * as flash from "express-flash";
+import * as fbgraph from "fbgraph";
 ```
-First the compiler will look for a `d.ts` file in `node_modules/@types` and then when it doesn't find one look in `src/types` and find our file `express-flash.d.ts`.
+First the compiler will look for a `d.ts` file in `node_modules/@types` and then when it doesn't find one look in `src/types` and find our file `fbgraph.d.ts`.
 
 #### Using `dts-gen`
 Unless you are familiar with `.d.ts` files, I strongly recommend trying to use the tool [dts-gen](https://github.com/Microsoft/dts-gen) first.
@@ -509,7 +509,6 @@ In that file you'll find two sections:
 | dotenv                          | Loads environment variables from .env file.                            |
 | errorhandler                    | Express 4 middleware.                                                 |
 | express                         | Node.js web framework.                                                |
-| express-flash                    | Provides flash messages for Express.                                   |
 | express-session                 | Express 4 middleware.                                                 |
 | express-validator               | Easy form validation for Express.                                     |
 | fbgraph                         | Facebook Graph API library.                                           |
