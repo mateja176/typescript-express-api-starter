@@ -73,7 +73,7 @@ passport.use(new FacebookStrategy({
         User.findOne({ facebook: profile.id }, (err, existingUser) => {
             if (err) { return done(err); }
             if (existingUser) {
-                req.flash("errors", { msg: "There is already a Facebook account that belongs to you. Sign in with that account or delete it, then link it with your current account." });
+                // There is already a Facebook account that belongs to you. Sign in with that account or delete it, then link it with your current account.
                 done(err);
             } else {
                 User.findById(req.user.id, (err, user: UserDocument) => {
@@ -84,7 +84,7 @@ passport.use(new FacebookStrategy({
                     user.profile.gender = user.profile.gender || profile._json.gender;
                     user.profile.picture = user.profile.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
                     user.save((err: Error) => {
-                        req.flash("info", { msg: "Facebook account has been linked." });
+                        // Facebook account has been linked.
                         done(err, user);
                     });
                 });
@@ -99,7 +99,7 @@ passport.use(new FacebookStrategy({
             User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
                 if (err) { return done(err); }
                 if (existingEmailUser) {
-                    req.flash("errors", { msg: "There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings." });
+                    // There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings.
                     done(err);
                 } else {
                     const user = new User();
