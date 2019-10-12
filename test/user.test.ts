@@ -1,6 +1,5 @@
 import request from "supertest";
 import app from "../src/app";
-import { expect } from "chai";
 
 describe("GET /login", () => {
     it("should return 200 OK", () => {
@@ -38,7 +37,7 @@ describe("POST /login", () => {
             .field("password", "Hunter2")
             .expect(302)
             .end(function(err, res) {
-                expect(res.error).not.to.be.undefined;
+                expect(res.error).not.toBeDefined();
                 done();
             });
 
