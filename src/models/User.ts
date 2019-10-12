@@ -1,4 +1,4 @@
-import { getModelForClass, mongoose, pre, prop } from "@typegoose/typegoose";
+import { DocumentType, getModelForClass, pre, prop } from "@typegoose/typegoose";
 import * as bcrypt from "bcrypt-nodejs";
 import crypto from "crypto";
 
@@ -44,7 +44,6 @@ class IUser {
   @prop({
     unique: true,
   })
-  @prop()
   email: string;
   @prop()
   password: string;
@@ -73,6 +72,6 @@ class IUser {
   }
 }
 
-export type UserDocument = mongoose.Document & IUser;
+export type UserDocument = DocumentType<IUser>;
 
 export const User = getModelForClass(IUser, { schemaOptions: { timestamps: true } });
